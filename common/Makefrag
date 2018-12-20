@@ -5,7 +5,7 @@ ROCKET_DIR ?= $(base_dir)/rocket-chip
 TOP_MODULE_PROJECT ?= zynq
 TOP_MODULE ?= Top
 CFG_PROJECT ?= $(TOP_MODULE_PROJECT)
-CONFIG ?= ZynqConfig
+CONFIG ?= BOOMZynqConfig
 SCALA_VERSION=2.11.12
 EXTRA_PACKAGES=testchipip
 
@@ -14,11 +14,13 @@ common = $(base_dir)/common
 common_build = $(common)/build
 testchipip = $(base_dir)/testchipip
 output_delivery = deliver_output
+BOOM_DIR = $(base_dir)/boommm
 SHELL := /bin/bash
 
 bootrom_img = $(testchipip)/bootrom/bootrom.rv64.img $(testchipip)/bootrom/bootrom.rv32.img
 rocketchip_stamp = $(common)/lib/rocketchip.stamp
 extra_stamps = $(addprefix $(common)/lib/,$(addsuffix .stamp,$(EXTRA_PACKAGES)))
+boom_stamp = $(common)/lib/boom.stamp
 
 ifneq ($(BOARD_MODEL),)
 	insert_board = s/\# REPLACE FOR OFFICIAL BOARD NAME/set_property "board_part" "$(BOARD_MODEL)"/g
@@ -53,7 +55,7 @@ lookup_scala_srcs = $(shell find $(1)/. -iname "*.scala" 2> /dev/null)
 # ------------------------------------------------------------------------------
 
 init-submodules:
-	cd $(base_dir) && git submodule update --init rocket-chip $(EXTRA_PACKAGES)
+	cd $(base_dir) && git submodule update --init rocket-chip $(EXTRA_PACKAGES) boommm
 	cd $(ROCKET_DIR) && git submodule update --init
 
 # Specialize sources for board
@@ -81,6 +83,13 @@ $(rocketchip_stamp): $(call lookup_scala_srcs, $(ROCKET_DIR)) $(ROCKET_DIR)/lib/
 	mkdir -p $(common)/lib
 	cp $(ROCKET_DIR)/target/pack/lib/* $(common)/lib
 	touch $(rocketchip_stamp)
+
+$(boom_stamp): $(call lookup_scala_srcs,$(BOOM_DIR)) $(rocketchip_stamp)
+	rm -f $(BOOM_DIR)/lib	
+	ln -s $(common)/lib $(BOOM_DIR)/lib
+	cd $(BOOM_DIR) && $(SBT) package
+	cp $(BOOM_DIR)/target/scala-2.11/*.jar $(common)/lib
+	touch $(boom_stamp)
 
 $(common)/Makefrag.pkgs: $(common)/generate-pkg-mk.sh
 	bash $(common)/generate-pkg-mk.sh $(EXTRA_PACKAGES) > $@

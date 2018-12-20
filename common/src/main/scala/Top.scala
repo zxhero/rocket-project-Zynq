@@ -1,12 +1,17 @@
 package zynq
 
 import chisel3._
-import freechips.rocketchip.config.{Parameters, Field}
+import freechips.rocketchip.config._
 import freechips.rocketchip.devices.tilelink._
-import freechips.rocketchip.diplomacy.{LazyModule, LazyModuleImp}
+import freechips.rocketchip.devices.debug._
+import freechips.rocketchip.diplomacy._
 import freechips.rocketchip.subsystem._
-import freechips.rocketchip.util.DontTouch
+import freechips.rocketchip.rocket._
+import freechips.rocketchip.tile._
+import freechips.rocketchip.tilelink._
+import freechips.rocketchip.util._
 import testchipip._
+import boom._
 
 case object ZynqAdapterBase extends Field[BigInt]
 
@@ -14,7 +19,7 @@ class Top(implicit val p: Parameters) extends Module {
   val address = p(ZynqAdapterBase)
   val config = p(ExtIn)
   val target = Module(LazyModule(new FPGAZynqTop).module)
-  val adapter = Module(LazyModule(new ZynqAdapter(address, config)).module)
+  val adapter = Module(LazyModule(new ZynqAdapter(address, config.get)).module)
 
   require(target.mem_axi4.size == 1)
 
@@ -35,7 +40,7 @@ class Top(implicit val p: Parameters) extends Module {
 }
 
 class FPGAZynqTop(implicit p: Parameters) extends RocketSubsystem
-    with HasMasterAXI4MemPort
+    with CanHaveMasterAXI4MemPort
     with HasSystemErrorSlave
     with HasPeripheryBootROM
     with HasSyncExtInterrupts
@@ -47,7 +52,7 @@ class FPGAZynqTop(implicit p: Parameters) extends RocketSubsystem
 
 class FPGAZynqTopModule(outer: FPGAZynqTop) extends RocketSubsystemModuleImp(outer)
     with HasRTCModuleImp
-    with HasMasterAXI4MemPortModuleImp
+    with CanHaveMasterAXI4MemPortModuleImp
     with HasPeripheryBootROMModuleImp
     with HasExtInterruptsModuleImp
     with HasNoDebugModuleImp

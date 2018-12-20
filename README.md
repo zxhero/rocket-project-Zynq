@@ -1,5 +1,8 @@
 Rocket Chip on Zynq FPGAs
 =========================
+### I have updated this repository to be compatible with july rocket-chip
+### Please run it on vivado 2018.x
+### trying to run boom2 core on Zynq boards
 ### Warning: This repository is deprecated and does not track Rocket Chip master.
 #### Those looking for an FPGA prototype of Rocket Chip should checkout SiFive’s [Freedom platform](https://github.com/sifive/freedom). Those looking for an FPGA-accelerated simulation environment (for obtaining cycle-accurate performance measurements) should use [FireSim](https://github.com/firesim/firesim). Both of these tools regularly update their version of Rocket Chip.
 

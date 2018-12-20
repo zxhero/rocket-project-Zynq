@@ -7,6 +7,7 @@ import freechips.rocketchip.devices.tilelink.BootROMParams
 import freechips.rocketchip.rocket.{RocketCoreParams, MulDivParams, DCacheParams, ICacheParams}
 import freechips.rocketchip.tile.{RocketTileParams, BuildCore, XLen}
 import testchipip._
+//import boom.system._
 
 class WithBootROM extends Config((site, here, up) => {
   case BootROMParams => BootROMParams(
@@ -17,8 +18,8 @@ class WithZynqAdapter extends Config((site, here, up) => {
   case SerialFIFODepth => 16
   case ResetCycles => 10
   case ZynqAdapterBase => BigInt(0x43C00000L)
-  case ExtMem => up(ExtMem, site).copy(idBits = 6)
-  case ExtIn => up(ExtIn, site).copy(beatBytes = 4, idBits = 12)
+  case ExtMem => up(ExtMem, site).map(_.copy(idBits = 6))
+  case ExtIn => up(ExtIn, site).map(_.copy(beatBytes = 4, idBits = 12))
   case BlockDeviceKey => BlockDeviceConfig(nTrackers = 2)
   case BlockDeviceFIFODepth => 16
   case NetworkFIFODepth => 16
@@ -61,3 +62,5 @@ class ZynqSmallConfig extends Config(new WithZynqAdapter ++ new DefaultSmallConf
 class ZynqFPGAConfig extends Config(new WithoutTLMonitors ++ new ZynqConfig)
 class ZynqMediumFPGAConfig extends Config(new WithoutTLMonitors ++ new ZynqMediumConfig)
 class ZynqSmallFPGAConfig extends Config(new WithoutTLMonitors ++ new ZynqSmallConfig)
+
+//class BOOMZynqConfig extends Config(new WithBootROM ++ new WithZynqAdapter ++ new boom.system.MediumBoomConfig ++ new WithoutTLMonitors)
