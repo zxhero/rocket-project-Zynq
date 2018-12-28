@@ -32,8 +32,6 @@ verilog_srcs = \
 	src/verilog/clocking.vh \
 	src/verilog/rocketchip_wrapper.v \
 	src/verilog/$(TOP_MODULE).$(CONFIG).v \
-	src/verilog/AsyncResetReg.v \
-	src/verilog/plusarg_reader.v \
 
 bootimage = fpga-images-$(BOARD)/boot.bin
 bootimage: $(bootimage)

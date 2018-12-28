@@ -11,7 +11,7 @@ import freechips.rocketchip.tile._
 import freechips.rocketchip.tilelink._
 import freechips.rocketchip.util._
 import testchipip._
-import boom._
+//import boom._
 
 case object ZynqAdapterBase extends Field[BigInt]
 
